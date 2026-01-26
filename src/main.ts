@@ -1,5 +1,7 @@
 import './style.css'
 
+const MAX_DAYS = 57
+
 type CountdownModel = {
   start: Date
   end: Date
@@ -46,11 +48,30 @@ function buildModel(now: Date = new Date()): CountdownModel {
 function renderShell(root: HTMLElement) {
   root.innerHTML = `
     <div class="min-h-dvh bg-slate-950 text-slate-100 grid place-items-center">
-      <div class="px-6">
-        <div id="daysLeft" class="text-7xl sm:text-8xl md:text-9xl font-semibold tabular-nums tracking-tight">—</div>
+      <div class="px-6 w-full max-w-xl">
+        <div id="daysLeft" class="text-center text-7xl sm:text-8xl md:text-9xl font-semibold tabular-nums tracking-tight">—</div>
+        <div class="mt-8">
+          <div
+            class="h-3 w-full overflow-hidden rounded-full bg-slate-800/70 ring-1 ring-inset ring-slate-700/60"
+            role="progressbar"
+            aria-label="Countdown progress"
+            aria-valuemin="0"
+            aria-valuemax="57"
+          >
+            <div
+              id="progressFill"
+              class="h-full w-full origin-right rounded-full bg-gradient-to-l from-indigo-400 via-sky-400 to-fuchsia-400"
+              style="transform: scaleX(1)"
+            ></div>
+          </div>
+        </div>
       </div>
     </div>
   `
+}
+
+function clamp(n: number, min: number, max: number): number {
+  return Math.min(max, Math.max(min, n))
 }
 
 function getOrCreateFaviconLink(): HTMLLinkElement {
@@ -100,6 +121,7 @@ function updateFaviconNumber(value: number) {
 
 function updateView(model: CountdownModel) {
   const daysLeftEl = document.getElementById('daysLeft')
+  const progressFillEl = document.getElementById('progressFill')
   if (!daysLeftEl) return
 
   // Se la data target è nel passato, mostriamo 0 (solo numero, come richiesto).
@@ -108,6 +130,15 @@ function updateView(model: CountdownModel) {
   daysLeftEl.textContent = text
   document.title = text
   updateFaviconNumber(value)
+
+  if (progressFillEl) {
+    const clampedValue = clamp(value, 0, MAX_DAYS)
+    const ratio = clampedValue / MAX_DAYS
+    ;(progressFillEl as HTMLElement).style.transform = `scaleX(${ratio})`
+    // Keep ARIA in sync without showing text.
+    const container = progressFillEl.parentElement
+    if (container) container.setAttribute('aria-valuenow', String(clampedValue))
+  }
 }
 
 function scheduleMidnightRefresh(onTick: () => void) {
