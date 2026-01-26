@@ -1,7 +1,7 @@
 (function(){let e=document.createElement(`link`).relList;if(e&&e.supports&&e.supports(`modulepreload`))return;for(let e of document.querySelectorAll(`link[rel="modulepreload"]`))n(e);new MutationObserver(e=>{for(let t of e)if(t.type===`childList`)for(let e of t.addedNodes)e.tagName===`LINK`&&e.rel===`modulepreload`&&n(e)}).observe(document,{childList:!0,subtree:!0});function t(e){let t={};return e.integrity&&(t.integrity=e.integrity),e.referrerPolicy&&(t.referrerPolicy=e.referrerPolicy),e.crossOrigin===`use-credentials`?t.credentials=`include`:e.crossOrigin===`anonymous`?t.credentials=`omit`:t.credentials=`same-origin`,t}function n(e){if(e.ep)return;e.ep=!0;let n=t(e);fetch(e.href,n)}})();var e=57;function t(e){return new Date(e.getFullYear(),e.getMonth(),e.getDate())}function n(e){let t=e.getDay();return t!==0&&t!==6}function r(e,r){let i=t(e),a=t(r);if(i.getTime()>a.getTime())return 0;let o=0,s=new Date(i);for(;s.getTime()<=a.getTime();)n(s)&&(o+=1),s.setDate(s.getDate()+1);return o}function i(e=new Date){let n=t(e),i=new Date(n.getFullYear(),2,31),a=n.getTime()>i.getTime();return{start:n,end:i,remainingBusinessDaysInclusive:a?0:r(n,i),isPast:a}}function a(e){e.innerHTML=`
     <div class="min-h-dvh bg-slate-950 text-slate-100 grid place-items-center">
       <div class="px-6 w-full max-w-xl">
-        <div id="daysLeft" class="text-7xl sm:text-8xl md:text-9xl font-semibold tabular-nums tracking-tight">—</div>
+        <div id="daysLeft" class="text-center text-7xl sm:text-8xl md:text-9xl font-semibold tabular-nums tracking-tight">—</div>
         <div class="mt-8">
           <div
             class="h-3 w-full overflow-hidden rounded-full bg-slate-800/70 ring-1 ring-inset ring-slate-700/60"
